@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_management_application/ui/screens/pin_verification_screen.dart';
+
 import '../widget/body_background.dart';
 import 'login_screen.dart';
 
@@ -102,5 +103,4 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         ),
       ),
     );
-  }
-}
+  }}

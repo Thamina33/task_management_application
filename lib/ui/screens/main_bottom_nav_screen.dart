@@ -5,7 +5,6 @@ import 'cancelled_tasks_screen.dart';
 import 'completed_tasks_screen.dart';
 import 'new_tasks_screen.dart';
 
-
 class MainBottomNavScreen extends StatefulWidget {
   const MainBottomNavScreen({super.key});
 
