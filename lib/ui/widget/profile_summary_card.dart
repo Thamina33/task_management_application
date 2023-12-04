@@ -16,7 +16,7 @@ class ProfileSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Uint8List imageBytes = const Base64Decoder().convert(AuthController.user?.photo ?? '');
+    Uint8List imageBytes = const Base64Decoder().convert(AuthController.user?.photo ?? '');
 
     return ListTile(
       onTap: () {
@@ -34,10 +34,10 @@ class ProfileSummaryCard extends StatelessWidget {
             ? const Icon(Icons.person)
             : ClipRRect(
           borderRadius: BorderRadius.circular(30),
-          // child: Image.memory(
-          //   imageBytes,
-          //   fit: BoxFit.cover,
-          // ),
+          child: Image.memory(
+            imageBytes,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
       title: Text(
@@ -50,11 +50,15 @@ class ProfileSummaryCard extends StatelessWidget {
       ),
       trailing: IconButton(
         onPressed: () async {
+
           await AuthController.clearAuthData();
           // TODO : solve this warning
+          if (!context.mounted) return;
+
           Navigator.pushAndRemoveUntil(
               context, MaterialPageRoute(builder: (context) => const LoginScreen()), (
               route) => false);
+
         },
         icon: const Icon(Icons.logout),
       ),

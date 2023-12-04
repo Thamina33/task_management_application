@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_management_application/ui/screens/login_screen.dart';
 
 import '../../data/network_caller/network_caller.dart';
 import '../../data/network_caller/network_response.dart';
@@ -22,6 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _signUpInProgress = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +55,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: 'Email',
                       ),
                       validator: (String? value) {
-                        // todo - validate the email address with regex
+
                         if (value?.trim().isEmpty ?? true) {
                           return 'Enter your valid email';
+                        }
+                        else if(!RegExp(r'\S+@\S+\.\S+').hasMatch(value!))
+                        {
+                          return "Please Enter a Valid Email";
                         }
                         return null;
                       },
@@ -100,9 +106,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: 'Mobile',
                       ),
                       validator: (String? value) {
-                        // todo - validate the mobile no with 11 digits
-                        if (value?.trim().isEmpty ?? true) {
+
+                        if (value?.trim().isEmpty ?? true ) {
                           return 'Enter your mobile';
+                        }
+                        else if (value!.length < 11) {
+                          return 'Your Phone Number must be have 11 digit';
                         }
                         return null;
                       },
@@ -118,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       validator: (String? value) {
                         if (value?.isEmpty ?? true) {
-                          return 'Enter your mobile';
+                          return 'Enter your password';
                         }
                         if (value!.length < 6) {
                           return 'Enter password more than 6 letters';
@@ -199,6 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         _clearTextFields();
         if (mounted) {
           showSnackMessage(context, 'Account has been created! Please login.');
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
         }
       } else {
         if (mounted) {

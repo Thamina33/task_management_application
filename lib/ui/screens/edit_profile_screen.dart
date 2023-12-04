@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:task_management_application/ui/screens/main_bottom_nav_screen.dart';
+import 'package:task_management_application/ui/screens/new_tasks_screen.dart';
 
 import '../../data/models/user_model.dart';
 import '../../data/network_caller/network_caller.dart';
@@ -25,6 +27,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _updateProfileInProgress = false;
 
@@ -41,7 +44,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Add form validation
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -54,76 +56,111 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        Text(
-                          'Update Profile',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        photoPickerField(),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _emailTEController,
-                          decoration: const InputDecoration(hintText: 'Email'),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _firstNameTEController,
-                          decoration:
-                          const InputDecoration(hintText: 'First name'),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _lastNameTEController,
-                          decoration:
-                          const InputDecoration(hintText: 'Last name'),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _mobileTEController,
-                          decoration: const InputDecoration(hintText: 'Mobile'),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _passwordTEController,
-                          decoration:
-                          const InputDecoration(hintText: 'Password (optional)'),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Visibility(
-                            visible: _updateProfileInProgress == false,
-                            replacement: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            child: ElevatedButton(
-                              onPressed: updateProfile,
-                              child:
-                              const Icon(Icons.arrow_circle_right_outlined),
-                            ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 32,
                           ),
-                        )
-                      ],
+                          Text(
+                            'Update Profile',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          photoPickerField(),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          TextFormField(
+                            controller: _emailTEController,
+                            decoration: const InputDecoration(hintText: 'Email'),
+                            validator: (String? value) {
+
+                              if (value?.trim().isEmpty ?? true) {
+                                return 'Enter your valid email';
+                              }
+                              else if(!RegExp(r'\S+@\S+\.\S+').hasMatch(value!))
+                              {
+                                return "Please Enter a Valid Email";
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          TextFormField(
+                            controller: _firstNameTEController,
+                            decoration:
+                            const InputDecoration(hintText: 'First name'),
+                            validator: (String? value) {
+                              if (value?.trim().isEmpty ?? true) {
+                                return 'Enter your first name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          TextFormField(
+                            controller: _lastNameTEController,
+                            decoration:
+                            const InputDecoration(hintText: 'Last name'),
+                            validator: (String? value) {
+                              if (value?.trim().isEmpty ?? true) {
+                                return 'Enter your Last name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          TextFormField(
+                            controller: _mobileTEController,
+                            decoration: const InputDecoration(hintText: 'Mobile'),
+                            validator: (String? value) {
+                              if (value?.trim().isEmpty ?? true) {
+                                return 'Enter your Phone Number';
+                              }
+                              else if(value!.length < 11){
+                                return 'Enter valid Phone Number';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          TextFormField(
+                            controller: _passwordTEController,
+                            decoration:
+                            const InputDecoration(hintText: 'Password (optional)'),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Visibility(
+                              visible: _updateProfileInProgress == false,
+                              replacement: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              child: ElevatedButton(
+                                onPressed:updateProfile,
+                                child:
+                                const Icon(Icons.arrow_circle_right_outlined),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -136,6 +173,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> updateProfile() async {
+    if (_formKey.currentState!.validate()) {
     _updateProfileInProgress = true;
     if (mounted) {
       setState(() {});
@@ -143,8 +181,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     String? photoInBase64;
     Map<String, dynamic> inputData = {
       "firstName": _firstNameTEController.text.trim(),
-      "lastName" : _lastNameTEController.text.trim(),
-      "email" : _emailTEController.text.trim(),
+      "lastName": _lastNameTEController.text.trim(),
+      "email": _emailTEController.text.trim(),
       "mobile": _mobileTEController.text.trim(),
     };
 
@@ -152,7 +190,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       inputData['password'] = _passwordTEController.text;
     }
 
-    if (photo != null){
+    if (photo != null) {
       List<int> imageBytes = await photo!.readAsBytes();
       photoInBase64 = base64Encode(imageBytes);
       inputData['photo'] = photoInBase64;
@@ -167,21 +205,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() {});
     }
     if (response.isSuccess) {
-      AuthController.updateUserInformation(UserModel(
+      var updatedUserModel = UserModel(
           email: _emailTEController.text.trim(),
           firstName: _firstNameTEController.text.trim(),
           lastName: _lastNameTEController.text.trim(),
           mobile: _mobileTEController.text.trim(),
           photo: photoInBase64 ?? AuthController.user?.photo
-      ));
+      );
+      AuthController.updateUserInformation(updatedUserModel);
       if (mounted) {
+        _emailTEController.text = updatedUserModel?.email ?? '';
+        _firstNameTEController.text =updatedUserModel?.firstName ?? '';
+        _lastNameTEController.text = updatedUserModel?.lastName ?? '';
+        _mobileTEController.text = updatedUserModel?.mobile ?? '';
+
+        setState(() {
+
+        });
         showSnackMessage(context, 'Update profile success!');
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context)=> const MainBottomNavScreen() ));
       }
     } else {
       if (mounted) {
         showSnackMessage(context, 'Update profile failed. Try again.');
       }
     }
+  }
   }
 
   Container photoPickerField() {

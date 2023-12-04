@@ -56,6 +56,7 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
   @override
   void initState() {
     super.initState();
+
     getTaskCountSummaryList();
     getNewTaskList();
   }
@@ -82,7 +83,7 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const ProfileSummaryCard(),
+             ProfileSummaryCard(),
             Visibility(
               visible: getTaskCountSummaryInProgress == false &&
                   (taskCountSummaryListModel.taskCountList?.isNotEmpty ??
