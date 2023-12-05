@@ -212,7 +212,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           mobile: _mobileTEController.text.trim(),
           photo: photoInBase64 ?? AuthController.user?.photo
       );
-      AuthController.updateUserInformation(updatedUserModel);
+      AuthController().updateUserInformation(updatedUserModel);
       if (mounted) {
         _emailTEController.text = updatedUserModel?.email ?? '';
         _firstNameTEController.text =updatedUserModel?.firstName ?? '';

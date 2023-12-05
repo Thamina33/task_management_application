@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/models/user_model.dart';
 
-class AuthController {
+class AuthController extends ChangeNotifier {
   static String? token;
   static UserModel? user;
 
@@ -14,10 +15,11 @@ class AuthController {
     user = model;
   }
 
-  static Future<void> updateUserInformation(UserModel model) async {
+   Future<void> updateUserInformation(UserModel model) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setString('user', jsonEncode(model.toJson()));
     user = model;
+    notifyListeners();
   }
 
   static Future<void> initializeUserCache() async {

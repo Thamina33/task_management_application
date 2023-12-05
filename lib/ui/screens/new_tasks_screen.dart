@@ -56,7 +56,6 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
   @override
   void initState() {
     super.initState();
-
     getTaskCountSummaryList();
     getNewTaskList();
   }
